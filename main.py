@@ -6,6 +6,7 @@ from utils.AlbiPy import HEADERS
 from time import sleep
 import threading
 from components.scrollableLog import LoggerScroll
+from components.gridCities import GridCities
 
 root = tk.Tk()
 root.title('Albion Analys')
@@ -30,22 +31,8 @@ label1 = ttk.Label(market_retrieve, text='Label1', background='red')
 label1.grid(column=1, sticky='s')
 market_cities.grid(column=2, row=0)
 
-#radio city
-city = tk.StringVar()
-bridgewatch = ttk.Radiobutton(market_cities, text='Bridgewatch', variable=city, value="bridgewatch")
-fort_sterling = ttk.Radiobutton(market_cities, text='Fort Sterling', variable=city, value="fort_sterling")
-tethford = ttk.Radiobutton(market_cities, text='Tethford', variable=city, value="tethford")
-lymhurst = ttk.Radiobutton(market_cities, text='Lymhurst', variable=city, value="lymhurst")
-martlock = ttk.Radiobutton(market_cities, text='Martlock', variable=city, value="martlock")
-brecilien = ttk.Radiobutton(market_cities, text='Brecilien', variable=city, value="brecilien")
-carleon = ttk.Radiobutton(market_cities, text='Carleon', variable=city, value="carleon")
-bridgewatch.pack()
-fort_sterling.pack()
-tethford.pack()
-lymhurst.pack()
-martlock.pack()
-carleon.pack()
-brecilien.pack()
+cities = ['bridgewatch','fort_sterling','tethford','lymhurst','martlock','brecilien','carleon']
+radios = GridCities(market_cities, cities)
 
 log_retriever = LoggerScroll(market_retrieve)
 log_retriever.grid(column=4, row=0)
@@ -56,7 +43,7 @@ def inizioGather():
     #thread.start()
 
     while not inizio_kill:
-        startScrape .config(state='disabled')
+        startScrape.config(state='disabled')
         logs = "Waiting three seconds...\n"
         
         log_retriever.addLog(msg=logs)
@@ -75,10 +62,13 @@ def inizioGather2():
     global inizio_kill
     inizio_kill = False
     thread_gather.start()
+    print(radios.getCity())
+    radios.disableAll()
 def fineGather():
     startScrape .config(state='enable')
     global inizio_kill
     inizio_kill = True
+    radios.enableAll()
 
 startScrape = ttk.Button(market_retrieve, text='Inzio', command=inizioGather2)
 startScrape.grid(column=3, row=0)
