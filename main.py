@@ -5,6 +5,7 @@ from utils.AlbiPy import sniffing_thread
 from utils.AlbiPy import HEADERS
 from time import sleep
 import threading
+from components.scrollableLog import LoggerScroll
 
 root = tk.Tk()
 root.title('Albion Analys')
@@ -26,8 +27,8 @@ market_data.grid(row=1)
 market_cities = ttk.Frame(market_retrieve)
 #market retrieve
 label1 = ttk.Label(market_retrieve, text='Label1', background='red')
-label1.grid(column=1)
-market_cities.grid(column=2)
+label1.grid(column=1, sticky='s')
+market_cities.grid(column=2, row=0)
 
 #radio city
 city = tk.StringVar()
@@ -46,47 +47,43 @@ martlock.pack()
 carleon.pack()
 brecilien.pack()
 
-logs = ""
-log_retrieve = st.ScrolledText(market_retrieve, width= 20, height= 20)
-log_retrieve.grid(column=4)
-log_retrieve.insert(tk.INSERT,logs)
-#button start gather data
+log_retriever = LoggerScroll(market_retrieve)
+log_retriever.grid(column=4, row=0)
+
 def inizioGather():
-    print("Starting sniffing thread...\nHit ctrl-c to stop recording and save results!\n")
+    global inizio_kill
     #thread = sniffing_thread()
     #thread.start()
 
-    # fetch recorded market orders and write them to file every three seconds
-    try:
-        while True:
-            startScrape.config(state='disabled')
-            logs = "Waiting three seconds...\n"
-            log_retrieve.configure(state='normal')
-            log_retrieve.insert(tk.END,logs)
-            log_retrieve.configure(state='disabled')
-            log_retrieve.update()
-            sleep(3)
+    while not inizio_kill:
+        startScrape .config(state='disabled')
+        logs = "Waiting three seconds...\n"
+        
+        log_retriever.addLog(msg=logs)
+        sleep(3)
 
-            logs = "Fetching recorded orders...\n"
-            log_retrieve.configure(state='normal')
-            log_retrieve.insert(tk.END,logs)
-            log_retrieve.configure(state='disabled')
-            log_retrieve.update()
-            log_retrieve.yview(tk.END)
-            #orders = thread.get_data()
+        logs = "Fetching recorded orders...\n"
+        
+        #orders = thread.get_data()
             
-    except:
-        pass
 
-thread_gather = threading.Thread(target=inizioGather)
+
+
 def inizioGather2():
+    log_retriever.clear()
+    thread_gather = threading.Thread(target=inizioGather)
+    global inizio_kill
+    inizio_kill = False
     thread_gather.start()
 def fineGather():
-    thread_gather.des
-startScrape = ttk.Button(market_retrieve, text='Inzio', command=lambda: threading.Thread(target=inizioGather).start())
-startScrape.grid(column=3)
-startScrape = ttk.Button(market_retrieve, text='Fine', command=lambda: fineGather)
-startScrape.grid(column=3)
+    startScrape .config(state='enable')
+    global inizio_kill
+    inizio_kill = True
+
+startScrape = ttk.Button(market_retrieve, text='Inzio', command=inizioGather2)
+startScrape.grid(column=3, row=0)
+endSniff = ttk.Button(market_retrieve, text='Fine', command=fineGather)
+endSniff.grid(column=3, row=1)
 
 
 label2 = ttk.Label(market_data, text='Label2', background='green')
