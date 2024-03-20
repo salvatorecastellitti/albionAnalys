@@ -5,7 +5,7 @@ import tkinter.scrolledtext as st
 class LoggerScroll(st.ScrolledText):
     #mi servono poi le variabili font e dimensioni
 
-    width = '20'
+    width = '40'
     height = '20'
     def __init__(self, parent):
         kwargs={

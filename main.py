@@ -36,28 +36,44 @@ radios = GridCities(market_cities, cities)
 
 log_retriever = LoggerScroll(market_retrieve)
 log_retriever.grid(column=4, row=0)
+def orders_to_csv(orders, filename):
+    # open file
+    output_file = open(filename, "w")
 
+    # write headers to file
+    output_file.write(",".join(HEADERS)+"\n")
+
+    # write parsed datapoints to file
+    for order in orders:
+        output_file.write(",".join(list(map(str, order.data)))+"\n")
+
+    # close output file
+    output_file.close()
+
+thread_sniff = None
 def inizioGather():
     global inizio_kill
-    #thread = sniffing_thread()
-    #thread.start()
+    global thread_sniff
+    log_retriever.addLog(msg="avvio il Thread dello sniffer")
+    thread_sniff = sniffing_thread()
+    thread_sniff.start()
 
     while not inizio_kill:
         startScrape.config(state='disabled')
-        logs = "Waiting three seconds...\n"
+        logs = "\nWaiting three seconds...\n"
         
         log_retriever.addLog(msg=logs)
         sleep(3)
 
-        logs = "Fetching recorded orders...\n"
-        
-        #orders = thread.get_data()
+        logs = "\nFetching recorded orders...\n"
+        log_retriever.addLog(msg=logs)
+        orders = thread_sniff.get_data()
+
+        orders_to_csv(orders, "test.csv")
             
-
-
-
 def inizioGather2():
     log_retriever.clear()
+    log_retriever.addLog(msg="\nAvvio il Thread del processo")
     thread_gather = threading.Thread(target=inizioGather)
     global inizio_kill
     inizio_kill = False
@@ -65,6 +81,9 @@ def inizioGather2():
     print(radios.getCity())
     radios.disableAll()
 def fineGather():
+    global thread_sniff
+    thread_sniff.stop()
+    log_retriever.addLog(msg="\nStopppo lo sniffer...")
     startScrape .config(state='enable')
     global inizio_kill
     inizio_kill = True

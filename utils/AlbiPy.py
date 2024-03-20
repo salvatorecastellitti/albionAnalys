@@ -121,8 +121,6 @@ class sniffing_thread(threading.Thread):
             for p in self.problems:
                 data = data.replace(p, "")
 
-            print(data)
-
             # partition received cleaned data into chunks
             chunks = [s[3:] for s in data.split("\\") if len(s) > 5 and ("Silver" in s or "ReferenceId" in s)]
 
