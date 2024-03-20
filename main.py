@@ -7,7 +7,9 @@ from time import sleep
 import threading
 from components.scrollableLog import LoggerScroll
 from components.gridCities import GridCities
+from utils.invioDati import sendDataToServer
 
+filename = "test.csv"
 root = tk.Tk()
 root.title('Albion Analys')
 root.geometry('600x600')
@@ -69,7 +71,7 @@ def inizioGather():
         log_retriever.addLog(msg=logs)
         orders = thread_sniff.get_data()
 
-        orders_to_csv(orders, "test.csv", radios.getCity())
+        orders_to_csv(orders, filename, radios.getCity())
             
 def inizioGather2():
     if(radios.getCity() == ""):
@@ -84,7 +86,14 @@ def inizioGather2():
     radios.disableAll()
 def fineGather():
     global thread_sniff
+    orders = thread_sniff.get_data()
+    log_retriever.addLog(msg="\nScrivo gli ordini rimasti in pancia")
+    orders_to_csv(orders, filename, radios.getCity())
+    log_retriever.addLog(msg="\nFinito di scrivere gli ordini")
     thread_sniff.stop()
+
+    #dovrei inviare il file al server
+    sendDataToServer(filename)
     log_retriever.addLog(msg="\nStopppo lo sniffer...")
     startScrape .config(state='enable')
     global inizio_kill
