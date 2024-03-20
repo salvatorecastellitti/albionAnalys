@@ -8,8 +8,9 @@ import threading
 from components.scrollableLog import LoggerScroll
 from components.gridCities import GridCities
 from utils.invioDati import sendDataToServer
+import os
 
-filename = "test.csv"
+filename = os.getcwd() + "/test.csv"
 root = tk.Tk()
 root.title('Albion Analys')
 root.geometry('600x600')
@@ -93,7 +94,9 @@ def fineGather():
     thread_sniff.stop()
 
     #dovrei inviare il file al server
-    sendDataToServer(filename)
+    status = sendDataToServer(filename)
+    if(status!='200'):
+        log_retriever.addLog(msg="\n\nERRORE INVIO DATI SUL SERVER \n\n")
     log_retriever.addLog(msg="\nStopppo lo sniffer...")
     startScrape .config(state='enable')
     global inizio_kill
