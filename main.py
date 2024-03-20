@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import ttk
+from tkinter import ttk, messagebox
 import tkinter.scrolledtext as st 
 from utils.AlbiPy import sniffing_thread
 from utils.AlbiPy import HEADERS
@@ -36,16 +36,16 @@ radios = GridCities(market_cities, cities)
 
 log_retriever = LoggerScroll(market_retrieve)
 log_retriever.grid(column=4, row=0)
-def orders_to_csv(orders, filename):
+def orders_to_csv(orders, filename, city):
     # open file
     output_file = open(filename, "w")
 
     # write headers to file
-    output_file.write(",".join(HEADERS)+"\n")
+    output_file.write("City,"+",".join(HEADERS)+"\n")
 
     # write parsed datapoints to file
     for order in orders:
-        output_file.write(",".join(list(map(str, order.data)))+"\n")
+        output_file.write(city + "," + ",".join(list(map(str, order.data)))+"\n")
 
     # close output file
     output_file.close()
@@ -54,7 +54,7 @@ thread_sniff = None
 def inizioGather():
     global inizio_kill
     global thread_sniff
-    log_retriever.addLog(msg="avvio il Thread dello sniffer")
+    log_retriever.addLog(msg="\nAvvio il Thread dello sniffer\n")
     thread_sniff = sniffing_thread()
     thread_sniff.start()
 
@@ -69,16 +69,18 @@ def inizioGather():
         log_retriever.addLog(msg=logs)
         orders = thread_sniff.get_data()
 
-        orders_to_csv(orders, "test.csv")
+        orders_to_csv(orders, "test.csv", radios.getCity())
             
 def inizioGather2():
+    if(radios.getCity() == ""):
+        messagebox.showerror(title="Errore", message='Devi selezionare una città prima di proseguire')
+        return
     log_retriever.clear()
     log_retriever.addLog(msg="\nAvvio il Thread del processo")
     thread_gather = threading.Thread(target=inizioGather)
     global inizio_kill
     inizio_kill = False
     thread_gather.start()
-    print(radios.getCity())
     radios.disableAll()
 def fineGather():
     global thread_sniff

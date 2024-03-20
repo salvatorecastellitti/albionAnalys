@@ -19,6 +19,7 @@ class LoggerScroll(st.ScrolledText):
     def addLog(self, msg):
         self.configure(state='normal')
         self.insert(tk.END,msg)
+        self.yview(tk.END)
         self.configure(state='disabled')
         self.update()
 

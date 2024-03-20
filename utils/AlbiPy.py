@@ -2,7 +2,7 @@ import socket
 import json
 import threading
 import platform
-from datetime import datetime
+from datetime import datetime, timedelta
 
 PROBLEMS = ["'", "$", "QH", "?8", "H@", "ZP"]
 HEADERS = ["Id", "UnitPriceSilver", "TotalPriceSilver", "Amount", "Tier", "IsFinished",
@@ -25,15 +25,10 @@ class datapoint:
     def __init__(self, data):
         # data attribute
         self.data = data[:]
-        # correct silver prices
-        data[1] //= 10000
-        data[2] //= 10000
-        # convert expire date to datetime object
-        data[17] = datetime.strptime(data[17][0:16], "%Y-%m-%dT%H:%M")
         # set attributes to data indexes
         self.Id = data[0]
-        self.UnitPriceSilver = data[1]
-        self.TotalPriceSilver = data[2]
+        self.UnitPriceSilver = str(data[1] // 10000)
+        self.TotalPriceSilver = str(data[2] // 10000)
         self.Amount = data[3]
         self.Tier = data[4]
         self.IsFinished = data[5]
@@ -48,7 +43,12 @@ class datapoint:
         self.ItemGroupTypeId = data[14]
         self.EnchantmentLevel = data[15]
         self.QualityLevel = data[16]
-        self.Expires = data[17]
+        try:
+            self.Expires = datetime.strptime(data[17][0:16], "%Y-%m-%dT%H:%M")
+        except ValueError:
+            self.Expires = datetime.now() + timedelta(days=58)
+            # Formattiamo la data nel formato richiesto
+            self.Expires = self.Expires.strftime("%Y-%m-%dT%H:%M")
         self.ReferenceId = data[18]
 
 
