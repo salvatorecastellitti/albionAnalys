@@ -93,7 +93,6 @@ def fineGather():
     log_retriever.addLog(msg="\nFinito di scrivere gli ordini")
     thread_sniff.stop()
 
-    #dovrei inviare il file al server
     status = sendDataToServer(filename)
     if(status!='200'):
         log_retriever.addLog(msg="\n\nERRORE INVIO DATI SUL SERVER \n\n")
@@ -103,7 +102,7 @@ def fineGather():
     inizio_kill = True
     radios.enableAll()
 
-startScrape = ttk.Button(market_retrieve, text='Inzio', command=inizioGather2)
+startScrape = ttk.Button(market_retrieve, text='Inizio', command=inizioGather2)
 startScrape.grid(column=3, row=0)
 endSniff = ttk.Button(market_retrieve, text='Fine', command=fineGather)
 endSniff.grid(column=3, row=1)

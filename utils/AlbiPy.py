@@ -33,8 +33,8 @@ class datapoint:
         self.Tier = data[4]
         self.IsFinished = data[5]
         self.AuctionType = data[6]
-        self.HasBuyerFetched = data[7]
-        self.HasSellerFetched = data[8]
+        #self.HasBuyerFetched = data[7]
+        #self.HasSellerFetched = data[8]
         self.SellerCharacterId = data[9]
         self.SellerName = data[10]
         self.BuyerCharacterId = data[11]
@@ -43,12 +43,14 @@ class datapoint:
         self.ItemGroupTypeId = data[14]
         self.EnchantmentLevel = data[15]
         self.QualityLevel = data[16]
+        """
         try:
             self.Expires = datetime.strptime(data[17][0:16], "%Y-%m-%dT%H:%M")
-        except ValueError:
+        except:
             self.Expires = datetime.now() + timedelta(days=58)
             # Formattiamo la data nel formato richiesto
             self.Expires = self.Expires.strftime("%Y-%m-%dT%H:%M")
+        """
         self.ReferenceId = data[18]
 
 
