@@ -31,7 +31,7 @@ class datapoint:
         self.TotalPriceSilver = str(data[2] // 10000)
         self.Amount = data[3]
         self.Tier = data[4]
-        self.IsFinished = data[5]
+        #self.IsFinished = data[5]
         self.AuctionType = data[6]
         #self.HasBuyerFetched = data[7]
         #self.HasSellerFetched = data[8]

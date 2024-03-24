@@ -7,9 +7,12 @@ from time import sleep
 import threading
 from components.scrollableLog import LoggerScroll
 from components.gridCities import GridCities
+from components.table import Table
 from utils.invioDati import sendDataToServer
 import os
+import json
 
+MAX_ROW = 4
 filename = os.getcwd() + "/test.csv"
 root = tk.Tk()
 root.title('Albion Analys')
@@ -34,7 +37,7 @@ label1 = ttk.Label(market_retrieve, text='Label1', background='red')
 label1.grid(column=1, sticky='s')
 market_cities.grid(column=2, row=0)
 
-cities = ['bridgewatch','fort_sterling','tethford','lymhurst','martlock','brecilien','carleon']
+cities = ['bridgewatch','fort_sterling','tethford','lymhurst','martlock','brecilien','carleon', 'black_market']
 radios = GridCities(market_cities, cities)
 
 log_retriever = LoggerScroll(market_retrieve)
@@ -86,16 +89,21 @@ def inizioGather2():
     thread_gather.start()
     radios.disableAll()
 def fineGather():
-    global thread_sniff
-    orders = thread_sniff.get_data()
-    log_retriever.addLog(msg="\nScrivo gli ordini rimasti in pancia")
-    orders_to_csv(orders, filename, radios.getCity())
-    log_retriever.addLog(msg="\nFinito di scrivere gli ordini")
-    thread_sniff.stop()
+    try:
+        global thread_sniff
+        orders = thread_sniff.get_data()
+        log_retriever.addLog(msg="\nScrivo gli ordini rimasti in pancia")
+        orders_to_csv(orders, filename, radios.getCity())
+        log_retriever.addLog(msg="\nFinito di scrivere gli ordini")
+        thread_sniff.stop()
 
-    status = sendDataToServer(filename)
-    if(status!='200'):
-        log_retriever.addLog(msg="\n\nERRORE INVIO DATI SUL SERVER \n\n")
+        status = sendDataToServer(filename)
+        if(status!='200'):
+            log_retriever.addLog(msg="\n\nERRORE INVIO DATI SUL SERVER \n\n")
+        else:
+            log_retriever.addLog(msg="\n\nDATI INVIATI \n\n")
+    except:
+        log_retriever.addLog(msg="\n\nQualche problema \n\n")
     log_retriever.addLog(msg="\nStopppo lo sniffer...")
     startScrape .config(state='enable')
     global inizio_kill
@@ -109,5 +117,25 @@ endSniff.grid(column=3, row=1)
 
 
 label2 = ttk.Label(market_data, text='Label2', background='green')
-label2.pack()
+label2.grid(column=1, sticky='s')
+data = """
+[{"UnitPriceSilver": "5320000", "Amount": "100", "AuctionType": "request", "ItemTypeId": "T5_CLOTH"}, {"UnitPriceSilver": "5310000", "Amount": "849", "AuctionType": "request", "ItemTypeId": "T5_CLOTH"}]
+"""
+
+
+dataContainer = ttk.Frame(market_data)
+data = json.loads(data)
+
+
+dataContainer.grid(column=2, row=0)
+singleDataMarket = [cities[x:x+4] for x in range(0, len(cities), 4)]
+
+for x,item in enumerate(singleDataMarket):
+    for y,city in enumerate(item):
+        tabella = Table(dataContainer, data=data)
+        tabella.update(data)
+        tabella.grid(column=y, row=x)
+
+
+
 root.mainloop()
