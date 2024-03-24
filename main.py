@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import ttk, messagebox
 import tkinter.scrolledtext as st 
-from utils.AlbiPy import sniffing_thread
+from utils.AlbiPy import sniffing_thread, datapoint
 from utils.AlbiPy import HEADERS
 from time import sleep
 import threading
@@ -51,7 +51,7 @@ def orders_to_csv(orders, filename, city):
 
     # write parsed datapoints to file
     for order in orders:
-        output_file.write(city + "," + ",".join(list(map(str, order.data)))+"\n")
+        output_file.write(city + "," + order.to_csv_line() +"\n")
 
     # close output file
     output_file.close()
@@ -119,7 +119,7 @@ endSniff.grid(column=3, row=1)
 label2 = ttk.Label(market_data, text='Label2', background='green')
 label2.grid(column=1, sticky='s')
 data = """
-[{"UnitPriceSilver": "5320000", "Amount": "100", "AuctionType": "request", "ItemTypeId": "T5_CLOTH"}, {"UnitPriceSilver": "5310000", "Amount": "849", "AuctionType": "request", "ItemTypeId": "T5_CLOTH"}]
+[{"UnitPriceSilver": "5320000", "Amount": "100", "AuctionType": "request", "ItemTypeId": "T5_CLOTH"}, {"UnitPriceSilver": "5310000", "Amount": "849", "AuctionType": "request", "ItemTypeId": "T5_CLOTH"},{"UnitPriceSilver": "5320000", "Amount": "100", "AuctionType": "request", "ItemTypeId": "T5_CLOTH"}, {"UnitPriceSilver": "5310000", "Amount": "849", "AuctionType": "request", "ItemTypeId": "T5_CLOTH"}]
 """
 
 
@@ -129,13 +129,22 @@ data = json.loads(data)
 
 dataContainer.grid(column=2, row=0)
 singleDataMarket = [cities[x:x+4] for x in range(0, len(cities), 4)]
-
+tabelle = []
+#TODO valutare se fare una classe ad hoc
 for x,item in enumerate(singleDataMarket):
     for y,city in enumerate(item):
-        tabella = Table(dataContainer, data=data)
+        tableContainer = ttk.Frame(dataContainer)
+        tableContainer.grid(column=y, row=x)
+
+        labelTable = ttk.Label(tableContainer, text=city)
+        labelTable.grid(column=0, row=1, sticky='n')
+        #TODO valutare se ha senso mettere city dentro, oppure fare un dict city:tabella
+        tabella = Table(tableContainer, data=data, city=city)
         tabella.update(data)
-        tabella.grid(column=y, row=x)
-
-
+        tabella.grid(column=0, row=2)
+        tabelle.append(tabella)
+        scrollbar = ttk.Scrollbar(tableContainer, orient=tk.VERTICAL, command=tabella.yview)
+        scrollbar.grid(column=1, row=2, sticky="ns")
+        tabella.configure(yscrollcommand=scrollbar.set)
 
 root.mainloop()

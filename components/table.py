@@ -17,7 +17,7 @@ class Table(ttk.Treeview):
                 if(firstExec):
                     self.heading(key, text=key)
                 values.append(value)
-            self.insert("", tk.END, values=values)
+            self.insert("", tk.END, values=values)# key='min' if values[])
             firstExec = False
     
     def getColumns(self, data: dict):
@@ -27,7 +27,8 @@ class Table(ttk.Treeview):
             columns.append(key)
         return columns
     
-    def __init__(self, parent, data):
+    def __init__(self, parent, data, city):
+        self.city = city
         if(len(self.getColumns(data))>0):
             self.columns = self.getColumns(data)
 

@@ -5,10 +5,10 @@ import platform
 from datetime import datetime, timedelta
 
 PROBLEMS = ["'", "$", "QH", "?8", "H@", "ZP"]
-HEADERS = ["Id", "UnitPriceSilver", "TotalPriceSilver", "Amount", "Tier", "IsFinished",
-           "AuctionType", "HasBuyerFetched", "HasSellerFetched", "SellerCharacterId",
+HEADERS = ["Id", "UnitPriceSilver", "TotalPriceSilver", "Amount", "Tier",
+           "AuctionType", "SellerCharacterId",
            "SellerName", "BuyerCharacterId", "BuyerName", "ItemTypeId", "ItemGroupTypeId",
-           "EnchantmentLevel", "QualityLevel", "Expires", "ReferenceId"]
+           "EnchantmentLevel", "QualityLevel", "ReferenceId"]
 
 
 def local_ip():
@@ -27,8 +27,8 @@ class datapoint:
         self.data = data[:]
         # set attributes to data indexes
         self.Id = data[0]
-        self.UnitPriceSilver = str(data[1] // 10000)
-        self.TotalPriceSilver = str(data[2] // 10000)
+        self.UnitPriceSilver = str(int(int(data[1]) / 10000))
+        self.TotalPriceSilver = str(int(int(data[2]) / 10000))
         self.Amount = data[3]
         self.Tier = data[4]
         #self.IsFinished = data[5]
@@ -53,6 +53,27 @@ class datapoint:
         """
         self.ReferenceId = data[18]
 
+    def to_dict(self):
+        return {
+            "Id": self.Id,
+            "UnitPriceSilver": self.UnitPriceSilver,
+            "TotalPriceSilver": self.TotalPriceSilver,
+            "Amount": self.Amount,
+            "Tier": self.Tier,
+            "AuctionType": self.AuctionType,
+            "SellerCharacterId": self.SellerCharacterId,
+            "SellerName": self.SellerName,
+            "BuyerCharacterId": self.BuyerCharacterId,
+            "BuyerName": self.BuyerName,
+            "ItemTypeId": self.ItemTypeId,
+            "ItemGroupTypeId": self.ItemGroupTypeId,
+            "EnchantmentLevel": self.EnchantmentLevel,
+            "QualityLevel": self.QualityLevel,
+            "ReferenceId": self.ReferenceId
+        }
+
+    def to_csv_line(self):
+        return ','.join(str(self.__dict__[header]) for header in HEADERS)
 
 class sniffer_data:
     """ Organized sniffed market data"""
