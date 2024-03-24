@@ -98,7 +98,7 @@ def fineGather():
         thread_sniff.stop()
 
         status = sendDataToServer(filename)
-        if(status!='200'):
+        if(status!=200):
             log_retriever.addLog(msg="\n\nERRORE INVIO DATI SUL SERVER \n\n")
         else:
             log_retriever.addLog(msg="\n\nDATI INVIATI \n\n")

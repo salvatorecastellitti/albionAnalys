@@ -17,17 +17,15 @@ def sendDataToServer(filename):
     with open("sample.json", "w") as outfile: 
         json.dump(result_dict, outfile, default=str)
     #send data
-    url = 'http://194.164.164.192/sendData'
+    url = 'http://194.164.164.192/saveMarket'
 
     headers = {
-        'Content-Encoding': 'gzip'
+        'Content-Encoding': 'gzip',
+        'Content-Type': 'application/x-gzip'
     }
     
     json_data = json.dumps(result_dict, default=str).encode('utf-8')
     compressed_data = gzip.compress(json_data)
-    print(compressed_data)
     x = requests.post(url, data=compressed_data, headers=headers)
+    print(x.status_code)
     return (x.status_code)    
-
-
-sendDataToServer('test.csv')

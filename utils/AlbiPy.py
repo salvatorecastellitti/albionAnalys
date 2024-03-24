@@ -8,7 +8,7 @@ PROBLEMS = ["'", "$", "QH", "?8", "H@", "ZP"]
 HEADERS = ["Id", "UnitPriceSilver", "TotalPriceSilver", "Amount", "Tier",
            "AuctionType", "SellerCharacterId",
            "SellerName", "BuyerCharacterId", "BuyerName", "ItemTypeId", "ItemGroupTypeId",
-           "EnchantmentLevel", "QualityLevel", "ReferenceId"]
+           "EnchantmentLevel", "QualityLevel"]
 
 
 def local_ip():
@@ -51,7 +51,7 @@ class datapoint:
             # Formattiamo la data nel formato richiesto
             self.Expires = self.Expires.strftime("%Y-%m-%dT%H:%M")
         """
-        self.ReferenceId = data[18]
+        #self.ReferenceId = data[18]
 
     def to_dict(self):
         return {
@@ -68,8 +68,7 @@ class datapoint:
             "ItemTypeId": self.ItemTypeId,
             "ItemGroupTypeId": self.ItemGroupTypeId,
             "EnchantmentLevel": self.EnchantmentLevel,
-            "QualityLevel": self.QualityLevel,
-            "ReferenceId": self.ReferenceId
+            "QualityLevel": self.QualityLevel
         }
 
     def to_csv_line(self):
